@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Redux Counter</title>
+</head>
+
+<body>
+    <h1 id="count">0</h1>
+    <button id="increment">+1</button>
+    <button id="decrement">-1</button>
+
+    <!-- Redux 라이브러리 CDN -->
+    <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+
+    <script>
+        // ✅ 1. Reducer 정의 (상태 변경 로직)
+        function reducer(state = { count: 0 }, action) {
+            switch (action.type) {
+                case 'INCREMENT':
+                    return { count: state.count + 1 };
+                case 'DECREMENT':
+                    return { count: state.count - 1 };
+                default:
+                    return state;
+            }
+        }
+
+        // ✅ 2. Store 생성
+        const store = Redux.createStore(reducer);
+
+        // ✅ 3. render 함수: state를 기반으로 화면 출력
+        function render() {
+            const state = store.getState(); // 현재 상태 가져오기
+            document.getElementById('count').innerText = state.count;
+        }
+
+        // ✅ 4. 구독 (subscribe): 상태가 바뀔 때 render 자동 실행
+        store.subscribe(render);
+
+        // ✅ 5. 초기 렌더링
+        render();
+
+        // ✅ 6. 버튼 클릭 이벤트 -> dispatch
+        document.getElementById('increment').addEventListener('click', () => {
+            store.dispatch({ type: 'INCREMENT' }); // 액션 발생
+        });
+
+        document.getElementById('decrement').addEventListener('click', () => {
+            store.dispatch({ type: 'DECREMENT' });
+        });
+    </script>
+</body>
+
+</html>

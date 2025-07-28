@@ -1,0 +1,30 @@
+<body>
+    <h1 id="count"></h1>
+
+    <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+    <script>
+        function reducer(state = {}, action) {
+            switch (action.type) {
+                case 'keydown':
+                    return {
+                        ...state,
+                        [action.payload]: (state[action.payload] || 0) + 1
+                    }
+                default:
+                    return state;
+            }
+        }
+
+        const store = Redux.createStore(reducer);
+
+        function render() {
+            document.getElementById('count').innerText = JSON.stringify(store.getState(), null, 2);
+        }
+        store.subscribe(render); // 상태 변경 시 호출
+        render();
+        const keydown = 'keydown';
+        document.addEventListener(keydown, function (e) {
+            store.dispatch({ type: keydown, payload: e.key });
+        });;
+    </script>
+</body>
