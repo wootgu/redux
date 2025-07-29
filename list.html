@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Redux List Example</title>
+</head>
+
+<body>
+    <h1>Todo List</h1>
+    <input type="text" id="todoInput" placeholder="할 일 입력" />
+    <button id="addBtn">추가</button>
+    <ul id="todoList"></ul>
+
+    <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+    <script>
+        // Action Types
+        const ADD_TODO = 'ADD_TODO';
+        const REMOVE_TODO = 'REMOVE_TODO';
+
+        // Action Creators
+        const addTodo = (text) => ({
+            type: ADD_TODO,
+            payload: text
+        });
+
+        const removeTodo = (index) => ({
+            type: REMOVE_TODO,
+            payload: index
+        });
+
+        // Initial State
+        const initialState = {
+            todos: []
+        };
+
+        // Reducer
+        function todoReducer(state = initialState, action) {
+            switch (action.type) {
+                case ADD_TODO:
+                    return {
+                        ...state,
+                        todos: [...state.todos, action.payload]
+                    };
+                case REMOVE_TODO:
+                    return {
+                        ...state,
+                        todos: state.todos.filter((_, i) => i !== action.payload)
+                    };
+                default:
+                    return state;
+            }
+        }
+
+        // Store
+        const store = Redux.createStore(todoReducer);
+
+        // DOM Elements
+        const todoInput = document.getElementById('todoInput');
+        const addBtn = document.getElementById('addBtn');
+        const todoList = document.getElementById('todoList');
+
+        // Render Function
+        function render() {
+            const state = store.getState();
+            todoList.innerHTML = '';
+            state.todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.textContent = todo;
+                li.onclick = () => store.dispatch(removeTodo(index));
+                todoList.appendChild(li);
+            });
+        }
+
+        // Subscribe to store updates
+        store.subscribe(render);
+
+        // Add button click handler
+        addBtn.onclick = () => {
+            const text = todoInput.value.trim();
+            if (text) {
+                store.dispatch(addTodo(text));
+                todoInput.value = '';
+            }
+        };
+
+        // Initial render
+        render();
+    </script>
+</body>
+
+</html>
