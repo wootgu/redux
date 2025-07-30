@@ -1,0 +1,59 @@
+<body>
+    <h1>키 입력 횟수</h1>
+    <table id="keyTable" border="1">
+        <thead>
+            <tr>
+                <th>키</th>
+                <th>횟수</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+    <script>
+        // 리듀서 정의
+        function reducer(state = {}, action) {
+            switch (action.type) {
+                case 'keydown':
+                    return {
+                        ...state,
+                        [action.payload]: (state[action.payload] || 0) + 1
+                    };
+                default:
+                    return state;
+            }
+        }
+
+        const store = Redux.createStore(reducer);
+
+        // 테이블 렌더링
+        function render() {
+            const state = store.getState();
+            const tbody = document.querySelector('#keyTable tbody');
+            tbody.innerHTML = ''; // 기존 내용 비우기
+
+            // 키-값 쌍 반복
+            Object.entries(state).forEach(([key, count]) => {
+                const row = document.createElement('tr');
+                const keyCell = document.createElement('td');
+                const countCell = document.createElement('td');
+
+                keyCell.textContent = key;
+                countCell.textContent = count;
+
+                row.appendChild(keyCell);
+                row.appendChild(countCell);
+                tbody.appendChild(row);
+            });
+        }
+
+        store.subscribe(render);
+        render();
+
+        // 키 입력 감지
+        document.addEventListener('keydown', function (e) {
+            store.dispatch({ type: 'keydown', payload: e.key });
+        });
+    </script>
+</body>
